@@ -1,3 +1,3 @@
-FROM scratch
+FROM ubuntu
 COPY /hello /hello
-ENTRYPOINT ["/hello"]
+CMD ["/hello"]
