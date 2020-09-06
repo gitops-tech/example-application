@@ -10,12 +10,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Build and Publish Tag Docker image
-        uses: VaultVulp/gp-docker-action@1.1.7
+      - name: Build and Push Container Image
+        uses: docker/build-push-action@v1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          image-name: ${{ github.event.repository.name }}
-          extract-git-tag: true
+          username: ${{ secrets.REGISTRY_USER }}
+          password: ${{ secrets.REGISTRY_TOKEN }}
+          dockerfile: Dockerfile
+          repository: ${{ github.event.repository.full_name }}
+          tag_with_ref: true
+          tag_with_sha: true
 
   release:
     runs-on: ubuntu-latest
@@ -28,6 +31,6 @@ jobs:
         with:
           workflow: New Application Version
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          inputs: '{"tag_name": "${{ github.event.release.tag_name }}", "app_repo": "${{ github.event.repository.name }}", "image": "docker.pkg.github.com/${{ github.event.repository.full_name }}/${{ github.event.repository.name }}:${{ github.event.release.tag_name }}"}'
+          inputs: '{"tag_name": "${{ github.event.release.tag_name }}", "app_repo": "${{ github.event.repository.name }}", "image": "${{ github.event.repository.full_name }}:${{ github.event.release.tag_name }}"}'
           ref: refs/heads/master
           repo: ${{ env.ENV_REPO }}
