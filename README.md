@@ -12,6 +12,6 @@ It runs a GitHub Workflow to build a container image on a new release, and trigg
 ## Run the App
 
 ```bash
-docker build -t app
+docker build -t app .
 docker run -p 8080:8080 app
 ```
