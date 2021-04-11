@@ -1,7 +1,8 @@
 name: new Release
 on:
-  release:
-    types: [created]
+  push:
+    tags:
+      - v*
 
 jobs:
   build:
@@ -24,13 +25,15 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
+      - name: Add TAG_NAME env property
+        run:  echo "TAG_NAME=`echo ${GITHUB_REF#refs/tags/}`" >> $GITHUB_ENV
       - name: Open PR in Environment Repository for new App Version
         env:
-          ENV_REPO: gitops-tech/example-environment
+          ENV_REPO: ${{ github.event.repository.owner.name }}/example-environment
         uses: benc-uk/workflow-dispatch@v1.1
         with:
           workflow: New Application Version
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          inputs: '{"tag_name": "${{ github.event.release.tag_name }}", "app_repo": "${{ github.event.repository.name }}", "image": "${{ github.event.repository.full_name }}:${{ github.event.release.tag_name }}"}'
-          ref: refs/heads/master
+          inputs: '{"tag_name": "${{ env.TAG_NAME }}", "app_repo": "${{ github.event.repository.name }}", "image": "${{ github.event.repository.full_name }}:${{ env.TAG_NAME }}"}'
+          ref: refs/heads/main
           repo: ${{ env.ENV_REPO }}
