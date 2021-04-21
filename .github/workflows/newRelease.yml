@@ -17,7 +17,7 @@ jobs:
           username: ${{ secrets.REGISTRY_USER }}
           password: ${{ secrets.REGISTRY_TOKEN }}
           dockerfile: Dockerfile
-          repository: ${{ github.event.repository.full_name }}
+          repository: ${{ secrets.REGISTRY_USER }}/${{ github.event.repository.name }}
           tag_with_ref: true
           tag_with_sha: true
 
